@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "732304951028",
+    "project_id": "chatta-dab00",
+    "storage_bucket": "chatta-dab00.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732304951028:android:997dad2eaac4d3339380a1",
+        "android_client_info": {
+          "package_name": "com.lorenzomorelli.chatta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732304951028-0llb7ju39altrl98s6qkekld7hot8gi0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpj3vBTfLOeFXLpLWED6wQ5eUa1MLwrhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732304951028-0llb7ju39altrl98s6qkekld7hot8gi0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
