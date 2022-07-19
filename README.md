@@ -1,4 +1,4 @@
-# chatta
+# Chattah
 
 A fast app to chat with your friends
 
