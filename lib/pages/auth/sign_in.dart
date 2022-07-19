@@ -1,4 +1,4 @@
-import 'package:chatta/services/auth.dart';
+import 'package:chattah/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -25,4 +25,3 @@ class _SignInState extends State<SignIn> {
     );
   }
 }
-
