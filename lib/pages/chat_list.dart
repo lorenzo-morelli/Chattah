@@ -1,5 +1,6 @@
-import 'package:chatta/pages/add_contact.dart';
-import 'package:chatta/services/auth.dart';
+import 'package:chattah/pages/add_contact.dart';
+import 'package:chattah/services/auth.dart';
+import 'package:chattah/widgets/contacts/drop_down.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,10 @@ class _ChatListState extends State<ChatList> {
           .map((snap) => DatabaseService(_auth.getUid()).contactListFromSnapshot(snap)),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Chatta"),
+          title: const Text("Chattah"),
+          actions: const [
+            DropDown(),
+          ],
         ),
         body: ListView(
           children: [

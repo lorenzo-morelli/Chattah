@@ -8,6 +8,7 @@ class UserData {
   String uid;
   String firstName;
   String lastName;
+  String nickname;
 
-  UserData(this.uid, this.firstName, this.lastName);
+  UserData(this.uid, this.firstName, this.lastName, this.nickname);
 }

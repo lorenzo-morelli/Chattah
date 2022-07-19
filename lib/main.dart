@@ -1,6 +1,5 @@
-import 'package:chatta/pages/contacts.dart';
-import 'package:chatta/pages/wrapper.dart';
-import 'package:chatta/services/auth.dart';
+import 'package:chattah/pages/wrapper.dart';
+import 'package:chattah/services/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +19,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamProvider<MyUser?>.value(
       catchError: (_, __) => null,
-      initialData: null,
       value: AuthService().user,
+      initialData: null,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

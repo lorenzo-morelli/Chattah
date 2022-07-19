@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:732304951028:android:997dad2eaac4d3339380a1",
+        "mobilesdk_app_id": "1:732304951028:android:36fecf95550daecf9380a1",
         "android_client_info": {
-          "package_name": "com.lorenzomorelli.chatta"
+          "package_name": "com.lorenzomorelli.chattah"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "732304951028-soc5a5lsfg0qtam3nplqn8ln7ja8sq5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lorenzomorelli.chattah",
+            "certificate_hash": "b2157bbd36bd8b29e71fc7c199a2030969606d54"
+          }
+        },
         {
           "client_id": "732304951028-0llb7ju39altrl98s6qkekld7hot8gi0.apps.googleusercontent.com",
           "client_type": 3

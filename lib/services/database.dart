@@ -19,15 +19,53 @@ class DatabaseService {
 
   DatabaseService.theirUid(this.myUid, this.theirUid);
 
+  Future getUserData() async {
+    UserData? user;
+    user = await usersColl.get().then((QuerySnapshot snapshot) {
+      snapshot.docs
+          .where((doc) => doc['uid'] == myUid)
+          .map((doc) => UserData(doc.get('uid'), doc.get('first name'), doc.get('last name'), doc.get('nickname')))
+          .toList();
+    });
+    return user;
+  }
+
   Future addUser(UserData userData) async {
     return usersColl.doc(myUid).set({
       'first name': userData.firstName,
       'last name': userData.lastName,
       'uid': userData.uid,
+      'nickname': userData.nickname,
     });
   }
 
-  Future addContact() async {;
+  Future changeNickname(String nickname) async {
+    bool exists = false;
+    await usersColl.get().then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        if (doc['nickname'] == nickname) exists = true;
+      });
+    });
+    if (!exists) {
+      return usersColl.doc(myUid).update({
+        'nickname': nickname,
+      });
+    } else {
+      return null;
+    }
+  }
+
+  Future<String> getNickname() async {
+    return usersColl.doc(myUid).get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        return documentSnapshot['nickname'] as String;
+      } else {
+        return "";
+      }
+    });
+  }
+
+  Future addContact() async {
     await usersColl.get().then((QuerySnapshot snapshot) {
       snapshot.docs.forEach((doc) {
         if (theirUid == doc['uid']) {
@@ -35,6 +73,7 @@ class DatabaseService {
             'first name': doc['first name'],
             'last name': doc['last name'],
             'uid': doc['uid'],
+            'nickname': doc['nickname'],
           });
         }
       });
@@ -46,6 +85,7 @@ class DatabaseService {
             'first name': doc['first name'],
             'last name': doc['last name'],
             'uid': doc['uid'],
+            'nickname': doc['nickname'],
           });
         }
       });
@@ -70,13 +110,19 @@ class DatabaseService {
 
   List<Contact> contactListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map((doc) => Contact(doc.get('uid'), doc.get('first name'), doc.get('last name')))
+        .map((doc) => Contact(
+              doc.get('uid'),
+              doc.get('first name'),
+              doc.get('last name'),
+              doc.get('nickname'),
+            ))
         .toList();
   }
 
   List<Message> messageListFromSnapshot(QuerySnapshot snapshot) {
     var messages = snapshot.docs
-        .map((doc) => Message(doc.get('to'), doc.get('from'), doc.get('body'), doc.get('timestamp'), doc.get('seen')))
+        .map((doc) =>
+            Message(doc.get('to'), doc.get('from'), doc.get('body'), doc.get('timestamp'), doc.get('seen')))
         .toList();
     messages.sort((a, b) => a.time.compareTo(b.time));
     return messages;

@@ -2,5 +2,6 @@ class Contact {
   String firstName;
   String lastName;
   String uid;
-  Contact(this.uid, this.firstName, this.lastName);
+  String nickname;
+  Contact(this.uid, this.firstName, this.lastName, this.nickname);
 }

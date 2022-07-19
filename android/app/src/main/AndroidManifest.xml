@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lorenzomorelli.chatta.chatta">
    <application
-        android:label="chatta"
+        android:label="chattah"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

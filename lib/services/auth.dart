@@ -37,16 +37,12 @@ class AuthService {
     var parts = name.split(' ');
     var firstName = parts[0].trim();
     var lastName = parts[1].trim();
-    DatabaseService(user.uid).addUser(UserData(user.uid, firstName, lastName));
+    final userData = UserData(user.uid, firstName, lastName, "");
+    DatabaseService(user.uid).addUser(userData);
     return _userOfFirebase(user);
   }
 
   Future signOut() async {
-    await GoogleSignIn().signOut();
-    try {
-      return await _auth.signOut();
-    } catch (e) {
-      return null;
-    }
+    await _auth.signOut();
   }
 }
