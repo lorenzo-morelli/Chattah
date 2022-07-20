@@ -1,6 +1,7 @@
-import 'package:chatta/services/auth.dart';
-import 'package:chatta/services/database.dart';
 import 'package:flutter/material.dart';
+
+import '../services/auth.dart';
+import '../services/database.dart';
 
 class AddContact extends StatefulWidget {
   const AddContact({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _AddContactState extends State<AddContact> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Add new contact"),
+      title: const Text("Add new contact"),
       content: Column(
         children: [
           TextField(
@@ -24,15 +25,16 @@ class _AddContactState extends State<AddContact> {
           ),
           ElevatedButton(
             onPressed: () => addContact(),
-            child: Text("Add contact"),
+            child: const Text("Add contact"),
           ),
         ],
       ),
     );
   }
 
-  void addContact() {
-    DatabaseService.theirUid(_auth.getUid(), controller.text).addContact();
+  void addContact() async {
+    var myNickname = await DatabaseService(_auth.getUid()).getNickname();
+    DatabaseService.theirNickname(myNickname, controller.text).addContact();
     Navigator.pop(context);
   }
 }

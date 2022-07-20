@@ -1,12 +1,12 @@
-import 'package:chatta/services/auth.dart';
-import 'package:chatta/widgets/chat/message_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/contact.dart';
 import '../models/message.dart';
+import '../services/auth.dart';
 import '../services/database.dart';
+import '../widgets/chat/message_list.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key, required this.contact}) : super(key: key);
@@ -51,6 +51,8 @@ class _ChatState extends State<Chat> {
             margin: const EdgeInsets.symmetric(horizontal: 10),
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
               controller: controller,
               decoration: InputDecoration(
                 border: InputBorder.none,

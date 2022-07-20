@@ -1,6 +1,7 @@
-import 'package:chatta/models/message.dart';
-import 'package:chatta/services/auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../models/message.dart';
+import '../../services/auth.dart';
 
 class MessageTile extends StatefulWidget {
   const MessageTile({Key? key, required this.message}) : super(key: key);
@@ -27,13 +28,17 @@ class _MessageTileState extends State<MessageTile> {
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(25)),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+                bottomLeft: Radius.circular(25),
+              ),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                  width: widget.message.body.length > 25 ? cWidth : null,
+                  width: widget.message.body.length > 34 ? cWidth : null,
                   child: Text(
                     widget.message.body,
                     style: const TextStyle(fontSize: 16),
@@ -44,8 +49,7 @@ class _MessageTileState extends State<MessageTile> {
           ),
         ],
       );
-    }
-    else {
+    } else {
       return Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,13 +59,17 @@ class _MessageTileState extends State<MessageTile> {
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: const BoxDecoration(
               color: Colors.blue,
-              borderRadius: BorderRadius.all(Radius.circular(25)),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+                bottomRight: Radius.circular(25),
+              ),
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                  width: widget.message.body.length > 25 ? cWidth : null,
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  width: widget.message.body.length > 34 ? cWidth : null,
                   child: Text(
                     widget.message.body,
                     style: const TextStyle(fontSize: 16, color: Colors.white),
@@ -80,11 +88,9 @@ class _MessageTileState extends State<MessageTile> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
-          widget.message.time.toDate().hour.toString() + ":" + widget.message.time.toDate().minute.toString(),
-      style: const TextStyle(
-        fontSize: 13,
-        color: Colors.grey
-      ),),
+        widget.message.time.toDate().hour.toString() + ":" + widget.message.time.toDate().minute.toString(),
+        style: const TextStyle(fontSize: 13, color: Colors.grey),
+      ),
     );
   }
 }

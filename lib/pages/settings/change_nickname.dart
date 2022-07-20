@@ -1,7 +1,7 @@
-import 'package:chatta/pages/chat_list.dart';
-import 'package:chatta/services/auth.dart';
-import 'package:chatta/services/database.dart';
 import 'package:flutter/material.dart';
+
+import '../../services/auth.dart';
+import '../../services/database.dart';
 
 class ChangeNickname extends StatefulWidget {
   const ChangeNickname({Key? key}) : super(key: key);
@@ -49,9 +49,7 @@ class _ChangeNicknameState extends State<ChangeNickname> {
                         Icons.arrow_forward,
                         color: Colors.blue,
                       ),
-                      onTap: () {
-                        setUsername();
-                      },
+                      onTap: () => setUsername(),
                     )
                   : null,
             ),

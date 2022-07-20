@@ -44,7 +44,7 @@ class _ChatTileState extends State<ChatTile> {
             ],
           ),
           title: Text(widget.contact.firstName + " " + widget.contact.lastName),
-          subtitle: Text("messaggio tattico nucleare", style: TextStyle(fontWeight: FontWeight.w400)),
+          subtitle: const Text("messaggio tattico nucleare", style: TextStyle(fontWeight: FontWeight.w400)),
         ),
       ),
     );

@@ -5,8 +5,10 @@ import '../models/message.dart';
 import '../models/user.dart';
 
 class DatabaseService {
-  final String myUid;
+  String? myUid;
   String? theirUid;
+  String? myNickname;
+  String? theirNickname;
   CollectionReference usersColl = FirebaseFirestore.instance.collection('users');
   late CollectionReference myChatsColl = FirebaseFirestore.instance.collection('users/$myUid/contacts');
   late CollectionReference theirChatsColl = FirebaseFirestore.instance.collection('users/$theirUid/contacts');
@@ -16,6 +18,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users/$theirUid/contacts/$myUid/messages');
 
   DatabaseService(this.myUid);
+
+  DatabaseService.theirNickname(this.myNickname, this.theirNickname);
 
   DatabaseService.theirUid(this.myUid, this.theirUid);
 
@@ -42,9 +46,9 @@ class DatabaseService {
   Future changeNickname(String nickname) async {
     bool exists = false;
     await usersColl.get().then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
+      for (DocumentSnapshot doc in snapshot.docs) {
         if (doc['nickname'] == nickname) exists = true;
-      });
+      }
     });
     if (!exists) {
       return usersColl.doc(myUid).update({
@@ -66,30 +70,42 @@ class DatabaseService {
   }
 
   Future addContact() async {
+    DocumentSnapshot? myDoc;
+    DocumentSnapshot? theirDoc;
     await usersColl.get().then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
-        if (theirUid == doc['uid']) {
-          myChatsColl.doc(theirUid).set({
-            'first name': doc['first name'],
-            'last name': doc['last name'],
-            'uid': doc['uid'],
-            'nickname': doc['nickname'],
-          });
+      for (DocumentSnapshot doc in snapshot.docs) {
+        if (theirNickname == doc['nickname']) {
+          theirDoc = doc;
         }
-      });
+      }
     });
     await usersColl.get().then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
-        if (myUid == doc['uid']) {
-          theirChatsColl.doc(myUid).set({
-            'first name': doc['first name'],
-            'last name': doc['last name'],
-            'uid': doc['uid'],
-            'nickname': doc['nickname'],
-          });
+      for (DocumentSnapshot doc in snapshot.docs) {
+        if (myNickname == doc['nickname']) {
+          myDoc = doc;
         }
-      });
+      }
     });
+
+    print(myDoc!.data());
+    print(theirDoc!.data());
+    if (theirDoc != null && myDoc != null) {
+      myChatsColl = FirebaseFirestore.instance.collection('users/${myDoc!['uid']}/contacts');
+      theirChatsColl = FirebaseFirestore.instance.collection('users/${theirDoc!['uid']}/contacts');
+      myChatsColl.doc(theirDoc!['uid']).set({
+        'first name': theirDoc!['first name'],
+        'last name': theirDoc!['last name'],
+        'uid': theirDoc!['uid'],
+        'nickname': theirDoc!['nickname'],
+      });
+
+      theirChatsColl.doc(myDoc!['uid']).set({
+        'first name': myDoc!['first name'],
+        'last name': myDoc!['last name'],
+        'uid': myDoc!['uid'],
+        'nickname': myDoc!['nickname'],
+      });
+    }
   }
 
   Future addMessage(Message message) async {
@@ -105,6 +121,7 @@ class DatabaseService {
       'from': message.from,
       'body': message.body,
       'timestamp': message.time,
+      'seen': message.seen,
     });
   }
 
