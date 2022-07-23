@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -38,7 +39,7 @@ class AuthService {
     var firstName = parts[0].trim();
     var lastName = parts[1].trim();
     final userData = UserData(user.uid, firstName, lastName, "");
-    DatabaseService(user.uid).addUser(userData);
+    DatabaseService().addUser(userData);
     return _userOfFirebase(user);
   }
 

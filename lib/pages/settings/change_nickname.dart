@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../services/auth.dart';
 import '../../services/database.dart';
 
 class ChangeNickname extends StatefulWidget {
@@ -12,8 +11,7 @@ class ChangeNickname extends StatefulWidget {
 
 class _ChangeNicknameState extends State<ChangeNickname> {
   final controller = TextEditingController();
-  final _auth = AuthService();
-  bool showError = false;
+  String showError = "";
   String nickname = "";
 
   @override
@@ -24,7 +22,7 @@ class _ChangeNicknameState extends State<ChangeNickname> {
   }
 
   Future<void> loadNickname() async {
-    nickname = await DatabaseService(_auth.getUid()).getNickname();
+    nickname = await DatabaseService().getNickname();
   }
 
   @override
@@ -38,37 +36,60 @@ class _ChangeNicknameState extends State<ChangeNickname> {
         child: Container(
           color: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: TextField(
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: nickname,
-              suffixIcon: controller.text.isNotEmpty
-                  ? GestureDetector(
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.blue,
+          child: Column(
+            children: [
+              TextField(
+                textAlign: TextAlign.center,
+                decoration: showError.isNotEmpty
+                    ? InputDecoration(
+                        fillColor: Colors.red[100],
+                        hintText: nickname,
+                        suffixIcon: controller.text.isNotEmpty
+                            ? GestureDetector(
+                                child: const Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.red,
+                                ),
+                                onTap: () => setUsername(),
+                              )
+                            : null,
+                      )
+                    : InputDecoration(
+                        border: InputBorder.none,
+                        hintText: nickname,
+                        suffixIcon: controller.text.isNotEmpty
+                            ? GestureDetector(
+                                child: const Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.blue,
+                                ),
+                                onTap: () => setUsername(),
+                              )
+                            : null,
                       ),
-                      onTap: () => setUsername(),
-                    )
-                  : null,
-            ),
-            controller: controller,
+                controller: controller,
+              ),
+              Text(showError.isNotEmpty ? "error" : ""),
+            ],
           ),
         ),
       ),
     );
   }
 
-  void setUsername() {
-    Future? result;
-    result = DatabaseService(_auth.getUid()).changeNickname(controller.text);
-    if (result == null) {
-      showError = true;
+  void setUsername() async {
+    if (controller.text.length < 7) {
+      showError = "Nickname must be at least 8 charachters";
     } else {
-      controller.clear();
-      nickname = controller.text;
-      //TODO snackbar
+      var result = await DatabaseService().changeNickname(controller.text);
+      if (result == null) {
+        print("impossible to change the nickname!");
+        showError = "Nickname already in use!";
+      } else {
+        controller.clear();
+        nickname = controller.text;
+        //TODO snackbar
+      }
     }
   }
 }

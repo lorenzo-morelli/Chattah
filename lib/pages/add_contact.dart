@@ -33,8 +33,8 @@ class _AddContactState extends State<AddContact> {
   }
 
   void addContact() async {
-    var myNickname = await DatabaseService(_auth.getUid()).getNickname();
-    DatabaseService.theirNickname(myNickname, controller.text).addContact();
+    var myNickname = await DatabaseService().getNickname();
+    DatabaseService().addContact(myNickname, controller.text);
     Navigator.pop(context);
   }
 }

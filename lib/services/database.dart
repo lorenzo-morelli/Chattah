@@ -1,3 +1,4 @@
+import 'package:chattah/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/contact.dart';
@@ -5,29 +6,14 @@ import '../models/message.dart';
 import '../models/user.dart';
 
 class DatabaseService {
-  String? myUid;
-  String? theirUid;
-  String? myNickname;
-  String? theirNickname;
+  final _auth = AuthService();
   CollectionReference usersColl = FirebaseFirestore.instance.collection('users');
-  late CollectionReference myChatsColl = FirebaseFirestore.instance.collection('users/$myUid/contacts');
-  late CollectionReference theirChatsColl = FirebaseFirestore.instance.collection('users/$theirUid/contacts');
-  late CollectionReference myMessagesColl =
-      FirebaseFirestore.instance.collection('users/$myUid/contacts/$theirUid/messages');
-  late CollectionReference theirMessagesColl =
-      FirebaseFirestore.instance.collection('users/$theirUid/contacts/$myUid/messages');
-
-  DatabaseService(this.myUid);
-
-  DatabaseService.theirNickname(this.myNickname, this.theirNickname);
-
-  DatabaseService.theirUid(this.myUid, this.theirUid);
 
   Future getUserData() async {
     UserData? user;
     user = await usersColl.get().then((QuerySnapshot snapshot) {
       snapshot.docs
-          .where((doc) => doc['uid'] == myUid)
+          .where((doc) => doc['uid'] == _auth.getUid())
           .map((doc) => UserData(doc.get('uid'), doc.get('first name'), doc.get('last name'), doc.get('nickname')))
           .toList();
     });
@@ -35,11 +21,15 @@ class DatabaseService {
   }
 
   Future addUser(UserData userData) async {
-    return usersColl.doc(myUid).set({
-      'first name': userData.firstName,
-      'last name': userData.lastName,
-      'uid': userData.uid,
-      'nickname': userData.nickname,
+    return usersColl.doc(userData.uid).get().then((DocumentSnapshot doc) {
+      if (!doc.exists) {
+        usersColl.doc(userData.uid).set({
+          'first name': userData.firstName,
+          'last name': userData.lastName,
+          'uid': userData.uid,
+          'nickname': "",
+        });
+      }
     });
   }
 
@@ -51,7 +41,7 @@ class DatabaseService {
       }
     });
     if (!exists) {
-      return usersColl.doc(myUid).update({
+      return usersColl.doc(_auth.getUid()).update({
         'nickname': nickname,
       });
     } else {
@@ -60,7 +50,7 @@ class DatabaseService {
   }
 
   Future<String> getNickname() async {
-    return usersColl.doc(myUid).get().then((DocumentSnapshot documentSnapshot) {
+    return usersColl.doc(_auth.getUid()).get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         return documentSnapshot['nickname'] as String;
       } else {
@@ -69,7 +59,19 @@ class DatabaseService {
     });
   }
 
-  Future addContact() async {
+  Future<Message> getLastMessage(String theirUid) async {
+    final myMessagesColl =
+        FirebaseFirestore.instance.collection('users/${_auth.getUid()}/contacts/$theirUid/messages');
+    Message? message;
+    await myMessagesColl.orderBy('timestamp', descending: true).limit(1).get().then((QuerySnapshot snapshot) {
+      for (DocumentSnapshot doc in snapshot.docs) {
+        message = Message(doc['from'], doc['to'], doc['body'], doc['timestamp'], doc['seen']);
+      }
+    });
+    return message!;
+  }
+
+  Future addContact(String myNickname, String theirNickname) async {
     DocumentSnapshot? myDoc;
     DocumentSnapshot? theirDoc;
     await usersColl.get().then((QuerySnapshot snapshot) {
@@ -86,19 +88,15 @@ class DatabaseService {
         }
       }
     });
-
-    print(myDoc!.data());
-    print(theirDoc!.data());
     if (theirDoc != null && myDoc != null) {
-      myChatsColl = FirebaseFirestore.instance.collection('users/${myDoc!['uid']}/contacts');
-      theirChatsColl = FirebaseFirestore.instance.collection('users/${theirDoc!['uid']}/contacts');
+      final myChatsColl = FirebaseFirestore.instance.collection('users/${myDoc!['uid']}/contacts');
+      final theirChatsColl = FirebaseFirestore.instance.collection('users/${theirDoc!['uid']}/contacts');
       myChatsColl.doc(theirDoc!['uid']).set({
         'first name': theirDoc!['first name'],
         'last name': theirDoc!['last name'],
         'uid': theirDoc!['uid'],
         'nickname': theirDoc!['nickname'],
       });
-
       theirChatsColl.doc(myDoc!['uid']).set({
         'first name': myDoc!['first name'],
         'last name': myDoc!['last name'],
@@ -109,18 +107,22 @@ class DatabaseService {
   }
 
   Future addMessage(Message message) async {
-    myMessagesColl.doc(message.time.toString()).set({
+    final myMessagesColl =
+        FirebaseFirestore.instance.collection('users/${message.from}/contacts/${message.to}/messages');
+    final theirMessagesColl =
+        FirebaseFirestore.instance.collection('users/${message.to}/contacts/${message.from}/messages');
+    myMessagesColl.doc(message.timestamp.toString()).set({
       'to': message.to,
       'from': message.from,
       'body': message.body,
-      'timestamp': message.time,
+      'timestamp': message.timestamp,
       'seen': message.seen,
     });
-    theirMessagesColl.doc(message.time.toString()).set({
+    theirMessagesColl.doc(message.timestamp.toString()).set({
       'to': message.to,
       'from': message.from,
       'body': message.body,
-      'timestamp': message.time,
+      'timestamp': message.timestamp,
       'seen': message.seen,
     });
   }
@@ -138,10 +140,15 @@ class DatabaseService {
 
   List<Message> messageListFromSnapshot(QuerySnapshot snapshot) {
     var messages = snapshot.docs
-        .map((doc) =>
-            Message(doc.get('to'), doc.get('from'), doc.get('body'), doc.get('timestamp'), doc.get('seen')))
+        .map((doc) => Message(
+              doc.get('to'),
+              doc.get('from'),
+              doc.get('body'),
+              doc.get('timestamp'),
+              doc.get('seen'),
+            ))
         .toList();
-    messages.sort((a, b) => a.time.compareTo(b.time));
+    messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
     return messages;
   }
 }

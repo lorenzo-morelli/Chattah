@@ -88,7 +88,9 @@ class _MessageTileState extends State<MessageTile> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
-        widget.message.time.toDate().hour.toString() + ":" + widget.message.time.toDate().minute.toString(),
+        widget.message.timestamp.toDate().hour.toString() +
+            ":" +
+            widget.message.timestamp.toDate().minute.toString(),
         style: const TextStyle(fontSize: 13, color: Colors.grey),
       ),
     );

@@ -27,7 +27,7 @@ class _ChatState extends State<Chat> {
       value: FirebaseFirestore.instance
           .collection('users/${_auth.getUid()}/contacts/${widget.contact.uid}/messages')
           .snapshots()
-          .map((snap) => DatabaseService(_auth.getUid()).messageListFromSnapshot(snap)),
+          .map((snap) => DatabaseService().messageListFromSnapshot(snap)),
       child: Scaffold(
         backgroundColor: Colors.blue[50],
         appBar: AppBar(
@@ -44,24 +44,42 @@ class _ChatState extends State<Chat> {
         ),
         bottomNavigationBar: Container(
           padding: MediaQuery.of(context).viewInsets,
-          decoration: BoxDecoration(
-            color: Colors.blue[100],
-          ),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: controller,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Type a message',
-                suffixIcon: GestureDetector(
-                  child: const Icon(Icons.send),
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Type a message',
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  child: const CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.white,
+                    ),
+                    radius: 25,
+                  ),
                   onTap: () => sendMessage(),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -72,7 +90,7 @@ class _ChatState extends State<Chat> {
   void sendMessage() {
     if (controller.text != "") {
       var message = Message(_auth.getUid(), widget.contact.uid, controller.text, Timestamp.now(), false);
-      DatabaseService.theirUid(_auth.getUid(), widget.contact.uid).addMessage(message);
+      DatabaseService().addMessage(message);
       controller.clear();
     }
   }

@@ -1,6 +1,8 @@
+import 'package:chattah/services/database.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/contact.dart';
+import '../../models/message.dart';
 import '../../pages/chat.dart';
 
 class ChatTile extends StatefulWidget {
@@ -12,6 +14,18 @@ class ChatTile extends StatefulWidget {
 }
 
 class _ChatTileState extends State<ChatTile> {
+  Message? lastMessage;
+
+  @override
+  void initState() {
+    loadLastMessage().whenComplete(() => setState(() => {}));
+    super.initState();
+  }
+
+  Future<void> loadLastMessage() async {
+    lastMessage = await DatabaseService().getLastMessage(widget.contact.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -44,7 +58,13 @@ class _ChatTileState extends State<ChatTile> {
             ],
           ),
           title: Text(widget.contact.firstName + " " + widget.contact.lastName),
-          subtitle: const Text("messaggio tattico nucleare", style: TextStyle(fontWeight: FontWeight.w400)),
+          subtitle: Text(
+            lastMessage?.body == null ? "" : lastMessage!.body,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: const TextStyle(fontWeight: FontWeight.w400),
+          ),
         ),
       ),
     );
