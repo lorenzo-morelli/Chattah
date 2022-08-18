@@ -1,0 +1,34 @@
+name: chattah
+description: A fast app to chat with all your friends
+version: 1.0.1+1
+
+environment:
+  sdk: ">=2.17.6 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  firebase_core: ^1.10.0
+  firebase_auth: ^3.2.0
+  cloud_firestore: ^3.1.0
+  provider: ^6.0.1
+  google_sign_in: ^5.2.1
+  font_awesome_flutter: ^10.1.0
+  local_auth: ^2.1.1
+  flutter_local_notifications: ^9.7.0
+  swipe_to: ^1.0.2
+  visibility_detector: ^0.3.3
+  file_picker: ^5.0.0
+  firebase_storage: ^10.3.4
+  timezone: ^0.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
