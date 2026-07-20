@@ -1,17 +1,4 @@
-buildscript {
-    ext.kotlin_version = '1.6.10'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.13'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.1'
-    }
-}
+import groovy.xml.XmlSlurper
 
 allprojects {
     repositories {
@@ -28,6 +15,23 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+// This project's pubspec.yaml pins several plugins (cloud_firestore, firebase_auth, ...)
+// from before AGP 8 made `namespace` mandatory and disabled custom BuildConfig fields
+// by default. Patch both in for every Android library module that needs it.
+subprojects {
+    project.plugins.withId("com.android.library") {
+        project.android {
+            buildFeatures {
+                buildConfig = true
+            }
+            if (namespace == null) {
+                def manifest = new XmlSlurper().parse(project.file("src/main/AndroidManifest.xml"))
+                namespace manifest.@package.text()
+            }
+        }
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
 }

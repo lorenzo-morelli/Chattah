@@ -46,7 +46,7 @@ class _ChangeProPicState extends State<ChangeProPic> {
   }
 
   Future selectFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.pickFiles();
     if (result != null) {
       pickedFile = result.files.first;
       await DatabaseService().updateProPic(pickedFile!).then((value) => setState(() => widget.oldPicture = value));

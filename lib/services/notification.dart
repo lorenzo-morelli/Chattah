@@ -35,11 +35,11 @@ class NotificationService {
   void showNotification(String fromUid, String title, String subtitle) {
     initializeTimeZones();
     flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      title,
-      subtitle,
-      TZDateTime.now(local).add(const Duration(seconds: 1)),
-      NotificationDetails(
+      id: 0,
+      title: title,
+      body: subtitle,
+      scheduledDate: TZDateTime.now(local).add(const Duration(seconds: 1)),
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(channel.id, channel.name,
             channelDescription: channel.description,
             importance: Importance.high,
@@ -48,12 +48,11 @@ class NotificationService {
             // groupKey: channel.groupId,
             icon: '@mipmap/ic_launcher'),
       ),
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
 
   void cancelNotifications() async {
-    await flutterLocalNotificationsPlugin.cancel(0);
+    await flutterLocalNotificationsPlugin.cancel(id: 0);
   }
 }

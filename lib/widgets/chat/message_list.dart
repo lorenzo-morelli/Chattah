@@ -51,7 +51,7 @@ class _MessageListState extends State<MessageList> {
             roundBottomCorner = true;
           }
           return SwipeTo(
-            onRightSwipe: () => widget.onSwipedMessage(messages[index]),
+            onRightSwipe: (_) => widget.onSwipedMessage(messages[index]),
             child: MessageTile(
               me: me,
               message: messages[index],
